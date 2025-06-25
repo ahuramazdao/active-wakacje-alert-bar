@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Calendar, ArrowRight } from 'lucide-react';
 
@@ -29,7 +28,7 @@ const InfoBanner = () => {
   }, [slides.length]);
 
   const handleClick = () => {
-    window.open('https://programydlaklubow.pl/program-aktywne-wakacje-', '_blank');
+    window.open('https://programydlaklubow.pl/zgloszenia', '_blank');
   };
 
   const currentSlideData = slides[currentSlide];
