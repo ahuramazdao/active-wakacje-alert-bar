@@ -1,11 +1,38 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Calendar, ArrowRight } from 'lucide-react';
 
 const InfoBanner = () => {
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  const slides = [
+    {
+      badge: "ZGŁOŚ SIĘ",
+      title: "po dotacje dla swojego klubu sportowego",
+      subtitle: "Bezpłatne zgłoszenie • Liczba miejsc ograniczona!",
+      ctaText: "Formularz po dotacje"
+    },
+    {
+      badge: "ZGŁOŚ SIĘ",
+      title: "Nawet do 300 000 zł na rozwój klubu sportowego",
+      subtitle: "Pomoc na każdym etapie • Złóż wniosek już dziś!",
+      ctaText: "Formularz po dotacje"
+    }
+  ];
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % slides.length);
+    }, 4000);
+
+    return () => clearInterval(interval);
+  }, [slides.length]);
+
   const handleClick = () => {
     window.open('https://programydlaklubow.pl/program-aktywne-wakacje-', '_blank');
   };
+
+  const currentSlideData = slides[currentSlide];
 
   return (
     <div 
@@ -34,24 +61,23 @@ const InfoBanner = () => {
               </div>
             </div>
 
-            {/* Text content */}
+            {/* Text content with slide transition */}
             <div className="flex-1">
-              <div className="text-sm md:text-lg font-bold leading-tight">
+              <div className="text-sm md:text-lg font-bold leading-tight transition-all duration-500">
                 <span className="bg-yellow-400 text-red-800 px-2 py-1 rounded-md text-xs md:text-sm font-extrabold mr-2 animate-bounce">
-                  TRWA NABÓR
+                  {currentSlideData.badge}
                 </span>
                 <span className="hidden md:inline">
-                  do rządowego programu "Aktywne Wakacje 2025"
+                  {currentSlideData.title}
                 </span>
                 <span className="md:hidden">
-                  "Aktywne Wakacje 2025"
+                  {currentSlide === 0 ? "po dotacje dla klubu" : "do 300 000 zł na rozwój"}
                 </span>
               </div>
               
-              <div className="text-xs md:text-sm opacity-90 mt-1">
-                <span className="hidden md:inline">Dotacje na organizację obozu sportowego • </span>
+              <div className="text-xs md:text-sm opacity-90 mt-1 transition-all duration-500">
                 <span className="font-semibold text-yellow-200">
-                  Termin naboru do 20.06.2025
+                  {currentSlideData.subtitle}
                 </span>
               </div>
             </div>
@@ -60,7 +86,9 @@ const InfoBanner = () => {
           {/* CTA Arrow */}
           <div className="flex-shrink-0 group-hover:translate-x-1 transition-transform duration-300">
             <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-3 py-2 md:px-4 md:py-2">
-              <span className="text-xs md:text-sm font-semibold">Dowiedz się więcej</span>
+              <span className="text-xs md:text-sm font-semibold transition-all duration-500">
+                {currentSlideData.ctaText}
+              </span>
               <ArrowRight className="w-4 h-4 md:w-5 md:h-5 group-hover:translate-x-1 transition-transform duration-300" />
             </div>
           </div>
@@ -69,6 +97,18 @@ const InfoBanner = () => {
         {/* Progress bar animation */}
         <div className="absolute bottom-0 left-0 h-1 bg-yellow-400 animate-pulse"></div>
         <div className="absolute bottom-0 left-0 h-1 bg-gradient-to-r from-yellow-400 to-orange-400 w-0 group-hover:w-full transition-all duration-1000"></div>
+        
+        {/* Slide indicators */}
+        <div className="absolute bottom-2 right-4 flex gap-1">
+          {slides.map((_, index) => (
+            <div
+              key={index}
+              className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                index === currentSlide ? 'bg-yellow-400' : 'bg-white/30'
+              }`}
+            />
+          ))}
+        </div>
       </div>
 
       {/* Subtle shadow overlay */}
