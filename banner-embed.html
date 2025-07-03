@@ -1,0 +1,450 @@
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Baner Dotacji</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        
+        .banner-container {
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(to right, #dc2626, #ef4444, #dc2626);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        .banner-container:hover {
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+        
+        /* Animated background effects */
+        .banner-bg {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to right, rgba(30, 58, 138, 0.2), transparent, rgba(30, 58, 138, 0.2));
+            animation: pulse 2s infinite;
+        }
+        
+        .banner-stripe {
+            position: absolute;
+            inset: 0;
+            opacity: 0.1;
+            overflow: hidden;
+        }
+        
+        .banner-stripe::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transform: skewX(-12deg) translateX(-100%);
+            transition: transform 1s ease;
+        }
+        
+        .banner-container:hover .banner-stripe::before {
+            transform: skewX(-12deg) translateX(200%);
+        }
+        
+        /* Main content layout */
+        .banner-content {
+            position: relative;
+            width: 100%;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+        
+        .banner-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+            min-width: 0;
+            justify-content: center;
+        }
+        
+        .banner-icon {
+            position: relative;
+            flex-shrink: 0;
+        }
+        
+        .icon-pulse {
+            position: absolute;
+            inset: 0;
+            background: #fbbf24;
+            border-radius: 50%;
+            animation: ping 1s infinite;
+            opacity: 0.3;
+        }
+        
+        .banner-text {
+            flex: 1;
+            min-width: 0;
+            text-align: center;
+        }
+        
+        .banner-title {
+            font-size: 10px;
+            font-weight: bold;
+            line-height: 1.2;
+            transition: all 0.5s ease;
+        }
+        
+        .banner-badge {
+            background: #fbbf24;
+            color: #7f1d1d;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 9px;
+            font-weight: 800;
+            margin-right: 4px;
+            animation: bounce 1s infinite;
+            display: inline-block;
+            white-space: nowrap;
+        }
+        
+        .banner-subtitle {
+            font-size: 9px;
+            opacity: 0.9;
+            margin-top: 2px;
+            font-weight: 600;
+            color: #fde047;
+            line-height: 1.2;
+        }
+        
+        .banner-cta {
+            flex-shrink: 0;
+            transition: transform 0.3s ease;
+        }
+        
+        .banner-container:hover .banner-cta {
+            transform: translateX(2px);
+        }
+        
+        .cta-button {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(4px);
+            border-radius: 20px;
+            padding: 4px 8px;
+            font-size: 9px;
+            font-weight: 600;
+            white-space: nowrap;
+            transition: all 0.5s ease;
+        }
+        
+        .cta-arrow {
+            transition: transform 0.3s ease;
+            flex-shrink: 0;
+        }
+        
+        .banner-container:hover .cta-arrow {
+            transform: translateX(2px);
+        }
+        
+        /* Progress indicators */
+        .progress-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 2px;
+            background: #fbbf24;
+            animation: pulse 2s infinite;
+        }
+        
+        .progress-fill {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 2px;
+            background: linear-gradient(to right, #fbbf24, #f97316);
+            width: 0;
+            transition: width 1s ease;
+        }
+        
+        .banner-container:hover .progress-fill {
+            width: 100%;
+        }
+        
+        .slide-indicators {
+            position: absolute;
+            bottom: 4px;
+            right: 8px;
+            display: flex;
+            gap: 2px;
+        }
+        
+        .slide-dot {
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .slide-dot.active {
+            background: #fbbf24;
+        }
+        
+        /* Mobile hidden/visible classes */
+        .mobile-hidden {
+            display: none;
+        }
+        
+        .mobile-only {
+            display: inline;
+        }
+        
+        /* Responsive breakpoints */
+        @media (min-width: 640px) {
+            .banner-content {
+                padding: 12px 16px;
+                gap: 12px;
+            }
+            
+            .banner-left {
+                justify-content: flex-start;
+                text-align: left;
+                gap: 12px;
+            }
+            
+            .banner-text {
+                text-align: left;
+            }
+            
+            .banner-title {
+                font-size: 14px;
+            }
+            
+            .banner-badge {
+                font-size: 12px;
+                padding: 3px 8px;
+                margin-right: 6px;
+            }
+            
+            .banner-subtitle {
+                font-size: 12px;
+                margin-top: 4px;
+            }
+            
+            .cta-button {
+                padding: 6px 12px;
+                font-size: 12px;
+                gap: 6px;
+            }
+            
+            .mobile-hidden {
+                display: inline;
+            }
+            
+            .mobile-only {
+                display: none;
+            }
+            
+            .slide-indicators {
+                bottom: 6px;
+                right: 12px;
+            }
+            
+            .slide-dot {
+                width: 6px;
+                height: 6px;
+            }
+        }
+        
+        @media (min-width: 1024px) {
+            .banner-content {
+                padding: 16px 32px;
+                gap: 16px;
+            }
+            
+            .banner-left {
+                gap: 16px;
+            }
+            
+            .banner-title {
+                font-size: 18px;
+            }
+            
+            .banner-badge {
+                font-size: 14px;
+                padding: 4px 8px;
+                margin-right: 8px;
+            }
+            
+            .banner-subtitle {
+                font-size: 14px;
+            }
+            
+            .cta-button {
+                padding: 8px 16px;
+                font-size: 14px;
+            }
+            
+            .progress-bar {
+                height: 4px;
+            }
+            
+            .progress-fill {
+                height: 4px;
+            }
+            
+            .slide-indicators {
+                bottom: 8px;
+                right: 16px;
+            }
+            
+            .slide-dot {
+                width: 8px;
+                height: 8px;
+            }
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { 
+                opacity: 0; 
+                transform: translateY(10px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0); 
+            }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        @keyframes bounce {
+            0%, 100% { 
+                transform: translateY(-25%); 
+                animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+            }
+            50% { 
+                transform: translateY(0); 
+                animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+            }
+        }
+        
+        @keyframes ping {
+            75%, 100% { 
+                transform: scale(2); 
+                opacity: 0; 
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="banner-container" onclick="window.open('https://programydlaklubow.pl/zgloszenia', '_blank')">
+        <div class="banner-bg"></div>
+        <div class="banner-stripe"></div>
+        
+        <div class="banner-content">
+            <div class="banner-left">
+                <div class="banner-icon">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="animation: pulse 2s infinite;">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                    <div class="icon-pulse"></div>
+                </div>
+                
+                <div class="banner-text">
+                    <div class="banner-title">
+                        <span class="banner-badge">ZGŁOŚ SIĘ</span>
+                        <span class="mobile-hidden" id="title-desktop">po dotacje dla swojego klubu sportowego</span>
+                        <span class="mobile-only" id="title-mobile">po dotacje dla klubu</span>
+                    </div>
+                    <div class="banner-subtitle" id="subtitle">
+                        Bezpłatne zgłoszenie • Liczba miejsc ograniczona!
+                    </div>
+                </div>
+            </div>
+            
+            <div class="banner-cta">
+                <div class="cta-button">
+                    <span id="cta-text">Formularz po dotacje</span>
+                    <svg class="cta-arrow" width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+        
+        <div class="progress-bar"></div>
+        <div class="progress-fill"></div>
+        
+        <div class="slide-indicators">
+            <div class="slide-dot active" data-slide="0"></div>
+            <div class="slide-dot" data-slide="1"></div>
+        </div>
+    </div>
+
+    <script>
+        // Slide data
+        const slides = [
+            {
+                titleDesktop: "po dotacje dla swojego klubu sportowego",
+                titleMobile: "po dotacje dla klubu",
+                subtitle: "Bezpłatne zgłoszenie • Liczba miejsc ograniczona!",
+                ctaText: "Formularz po dotacje"
+            },
+            {
+                titleDesktop: "Nawet do 300 000 zł na rozwój klubu sportowego",
+                titleMobile: "do 300 000 zł na rozwój",
+                subtitle: "Pomoc na każdym etapie • Złóż wniosek już dziś!",
+                ctaText: "Formularz po dotacje"
+            }
+        ];
+
+        let currentSlide = 0;
+
+        function updateSlide() {
+            const slide = slides[currentSlide];
+            
+            // Update text content
+            document.getElementById('title-desktop').textContent = slide.titleDesktop;
+            document.getElementById('title-mobile').textContent = slide.titleMobile;
+            document.getElementById('subtitle').textContent = slide.subtitle;
+            document.getElementById('cta-text').textContent = slide.ctaText;
+            
+            // Update indicators
+            document.querySelectorAll('.slide-dot').forEach((dot, index) => {
+                dot.classList.toggle('active', index === currentSlide);
+            });
+        }
+
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % slides.length;
+            updateSlide();
+        }
+
+        // Auto-advance slides every 4 seconds
+        setInterval(nextSlide, 4000);
+
+        // Initialize
+        updateSlide();
+    </script>
+</body>
+</html>
